@@ -1,0 +1,118 @@
+#!/bin/bash
+
+# RunCase script will walk users through various scripts to parse data from an evidence collection.
+
+###### FUNCTIONS
+
+press_enter()
+{
+	echo -en "\nPress ENTER to continue..."
+	read
+	clear
+}
+
+case_setup()
+# At the start, it will ask users for variables to add to PATH for use with other scripts in collection of scripts.
+{
+	clear
+	echo "### Start New Case Setup ###"
+	echo ""
+	echo "Create working evidence folder (NEW folder name for this case)"
+	echo "This script will create the folder in the user's home directory"
+
+	echo -n "Output folder name > "
+	read evpath
+	if [ -d ~/$evpath ]; then
+		echo "That folder exists...exiting"
+		press_enter
+		exit
+	else
+		sudo mkdir ~/$evpath
+		echo ""
+		echo "Working output path set to: $evpath"
+		echo ""
+	fi
+}
+
+proxycache()
+{
+	clear
+	echo "Enter location of proxy evidence"
+	echo -n "Location > "
+	read -e proxypath
+	echo ""
+	echo "Proxy evidence tree (4 levels deep):"
+	tree -h -L 4 $proxypath
+	echo "Writing full tree dump to file...please wait..."
+	tree -h $proxypath -o $evpath/proxystructure.txt
+	echo "Completed..."
+	press_enter
+}
+
+proxymenu()
+{
+	clear
+        echo "Enter location of proxy evidence"
+        echo -n "Location > "
+        read -e proxypath
+        echo ""
+
+	until [ "$selection" = "0" ]; do
+        	clear
+	        echo "
+        	MENU
+	        1 - Display proxy evidence tree (limited to 4 levels deep)
+        	2 - Save full proxy evidence tree to file
+	        3 - Display proxy config and log files
+        	4 - asdf
+
+	        0 - exit program"
+
+        	echo ""
+        echo -n "Enter selection: "
+        read selection
+        echo ""
+        case $selection in
+                1 ) proxymenu ;;
+                2 ) stuff ;;
+                0 ) exit;;
+                * ) echo "Please enter a number"; press_enter
+        esac
+	done
+}
+
+stuff()
+{
+ echo "stuff"
+}
+
+
+
+###### MAIN
+
+case_setup
+until [ "$selection" = "0" ]; do
+	clear
+	echo "
+	MENU
+	1 - Proxy evidence menu
+	2 - asdf
+	3 - asdfs
+	4 - asdf
+
+	0 - exit program"
+
+	echo ""
+	echo -n "Enter selection: "
+	read selection
+	echo ""
+	case $selection in
+		1 ) proxymenu ;;
+		2 ) stuff ;;
+		0 ) exit;;
+		* ) echo "Please enter a number"; press_enter
+	esac
+done
+
+clear
+exit 0

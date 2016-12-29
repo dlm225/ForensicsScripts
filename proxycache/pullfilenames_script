@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Bash script to parse through proxy cache folders in search of user-provided string
+# (typically a URI segment) using grep.  Script will dump filenames/locations to text
+# file for use by other scripts.
+
+
