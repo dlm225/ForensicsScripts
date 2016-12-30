@@ -4,6 +4,28 @@
 
 ###### FUNCTIONS
 
+proxy_overview()
+{
+	echo "Please wait...process may take a few minutes to complete..."
+	echo ""
+	echo "PROXY CACHE OVERVIEW"
+	echo "------------------------------------------------------------"
+	echo -n "Total size of proxy cache (in bytes): "
+	du -sb $proxypath | awk '{print $1}'
+	echo -n "Number of proxy files: "
+	find . -type f | wc -l
+	echo -n "Number of unique URLs: " 
+	for file in $( grep -rail http:// $proxypath ); 
+	do strings $file | grep ^http|head -1;done | uniq | wc -l
+	echo -n "Number of unique domains: "
+	for file in $( grep -rail http:// $proxypath ); 
+        do strings $file | grep ^http|head -1;done | awk -F/ '{print $3}' | sort | uniq -c | wc -l
+	echo "Top 15 domains (by count):"
+	for file in $( grep -rail http:// $proxypath ); 
+        do strings $file | grep ^http|head -1;done | awk -F/ '{print $3}' | sort | uniq -c | sort -nr | sed -n 1,15p
+	press_enter
+}
+
 press_enter()
 {
 	echo -en "\nPress ENTER to continue..."
@@ -29,22 +51,18 @@ case_setup()
 	else
 		sudo mkdir ~/$evpath
 		echo ""
-		echo "Working output path set to: $evpath"
+		echo "Working output path set to: /home/$USER/$evpath"
 		echo ""
+		press_enter
 	fi
 }
 
-proxycache()
+proxycache_tree()
 {
-	clear
-	echo "Enter location of proxy evidence"
-	echo -n "Location > "
-	read -e proxypath
-	echo ""
 	echo "Proxy evidence tree (4 levels deep):"
 	tree -h -L 4 $proxypath
 	echo "Writing full tree dump to file...please wait..."
-	tree -h $proxypath -o $evpath/proxystructure.txt
+	sudo tree -h $proxypath -o /home/$USER/$evpath/proxyevidencetreeFULL.txt
 	echo "Completed..."
 	press_enter
 }
@@ -52,67 +70,75 @@ proxycache()
 proxymenu()
 {
 	clear
-        echo "Enter location of proxy evidence"
-        echo -n "Location > "
-        read -e proxypath
-        echo ""
-
-	until [ "$selection" = "0" ]; do
+        if [[ $proxypath == "" ]]; then
+		echo "Enter location of proxy evidence"
+        	echo ""
+		echo -n "Location > "
+        	read -e proxypath
+        	echo ""
+	else
+		echo "Proxy cache evidence path set to:"
+		echo "$proxypath"
+		press_enter
+	fi
+	unset proxyselection
+	until [ $proxyselection == "0" ]; do
         	clear
 	        echo "
-        	MENU
-	        1 - Display proxy evidence tree (limited to 4 levels deep)
-        	2 - Save full proxy evidence tree to file
-	        3 - Display proxy config and log files
-        	4 - asdf
+PROXY CACHE MENU
+---------------------------------------------------------
+1 - Display proxy evidence tree 
+	(limited to 4 levels deep)
+	(full tree dumped to file)
+2 - Display proxy cache overview
+3 - Retrieve list of URLs
+4 - asdf
 
-	        0 - exit program"
+0 - exit to MAIN MENU"
 
         	echo ""
         echo -n "Enter selection: "
-        read selection
+        read proxyselection
         echo ""
-        case $selection in
-                1 ) proxymenu ;;
-                2 ) stuff ;;
-                0 ) exit;;
+        case $proxyselection in
+		1 ) proxycache_tree;;
+		2 ) proxy_overview;;
+		0 ) return;;
                 * ) echo "Please enter a number"; press_enter
         esac
 	done
 }
 
-stuff()
+main_menu()
 {
- echo "stuff"
-}
+	until [ $mainselection == "0" ]; do
+		clear
+		echo "
+MAIN MENU
+-----------------------
+1 - Proxy evidence menu
+2 - asdf
+3 - asdfs
+4 - asdf
 
-
-
-###### MAIN
-
-case_setup
-until [ "$selection" = "0" ]; do
-	clear
-	echo "
-	MENU
-	1 - Proxy evidence menu
-	2 - asdf
-	3 - asdfs
-	4 - asdf
-
-	0 - exit program"
+0 - exit program"
 
 	echo ""
 	echo -n "Enter selection: "
-	read selection
+	read mainselection
 	echo ""
-	case $selection in
+	case $mainselection in
 		1 ) proxymenu ;;
 		2 ) stuff ;;
-		0 ) exit;;
+		0 ) return;;
 		* ) echo "Please enter a number"; press_enter
 	esac
-done
+	done
+}
 
+
+######### MAIN
+case_setup
+main_menu
 clear
 exit 0
