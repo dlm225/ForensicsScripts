@@ -109,6 +109,102 @@ PROXY CACHE MENU
 	done
 }
 
+pcap_info()
+{
+
+}
+
+pcap_filter()
+{
+	clear
+	echo "
+PCAP FILTER MENU
+----------------------------------
+Choose a filter:
+1 - by time
+2 - by IP address (src or dst)
+3 - search for string
+
+0 - return to pcap menu"
+
+	echo ""
+	echo -n "Enter selection: "
+	read proxyfilterselection
+	echo ""
+	case $proxyfilterselection in
+		1) pcap_editbytime;;
+		2) pcap_filterbyIP;;
+		3) pcap_searchforstring;;
+		0) return;;
+		*) echo "Please enter a number"; press_enter
+	esac
+	done
+
+        clear
+        echo "
+PCAP FILTER MENU
+----------------------------------"
+        ls -l *.pcap
+        echo ""
+        echo -n "Which pcap file? : "
+        read -e pcapfile1
+
+
+	
+}
+
+pcap_split()
+{
+
+}
+
+pcap_merge()
+{
+
+}
+
+pcapmenu()
+{
+	clear
+	if [[ $pcappath == "" ]]; then
+                echo "Enter location of pcap evidence"
+                echo ""
+                echo -n "Location > "
+                read -e pcappath
+                echo ""
+        else
+                echo "PCAP evidence path set to:"
+                echo "$pcappath"
+                press_enter
+        fi
+        unset pcapselection
+        until [ $pcapselection == "0" ]; do
+                clear
+                echo "
+PCAP ANALYSIS MENU
+---------------------------------------------------------
+1 - Display pcap file(s) information 
+2 - Filter a pcap
+3 - Split a pcap file by time or size
+4 - Merge 2 or more pcap files
+
+0 - exit to MAIN MENU"
+
+                echo ""
+        echo -n "Enter selection: "
+        read pcapselection
+        echo ""
+        case $pcapselection in
+                1 ) pcap_info;;
+                2 ) pcap_filter;;
+		3 ) pcap_split;;
+		4 ) pcap_merge;;
+                0 ) return;;
+                * ) echo "Please enter a number"; press_enter
+        esac
+        done
+}
+
 main_menu()
 {
 	until [ $mainselection == "0" ]; do
@@ -117,7 +213,7 @@ main_menu()
 MAIN MENU
 -----------------------
 1 - Proxy evidence menu
-2 - asdf
+2 - PCAP Analysis
 3 - asdfs
 4 - asdf
 
@@ -129,7 +225,7 @@ MAIN MENU
 	echo ""
 	case $mainselection in
 		1 ) proxymenu ;;
-		2 ) stuff ;;
+		2 ) pcapmenu ;;
 		0 ) return;;
 		* ) echo "Please enter a number"; press_enter
 	esac
