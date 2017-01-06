@@ -111,7 +111,54 @@ PROXY CACHE MENU
 
 pcap_info()
 {
+	clear
+	echo "
+PCAP INFO MENU
+-------------------------------------
+Choose a number:
+1 - list pcap files
+2 - display HTTP Server Strings
 
+0 - return to PCAP menu"
+
+	echo ""
+	echo -n "Enter Selection: "
+	read pcapinfoselection
+	echo ""
+	case $pcapinfoselection in
+		1 ) ls -l $pcappath; press_enter;;
+		2 ) clear; echo -n "Which pcap?: "; read $pcapfile1; 
+			tshark -r $pcappath/$pcapfile1 -n -Y 'http.server' -T fields -e http.server | sort | uniq -c | sort -nr; press_enter;;
+		0 ) return;;
+		* ) echo "Please enter a number"; press_enter;;
+	esac
+}
+
+pcap_searchforstring()
+{
+	clear
+	echo "
+PCAP FILTER - SEARCH FOR STRING IN PCAP files
+----------------------------------------------
+Choose a search parameter:
+1 - asdfasdf
+2 - search for ASCII anywhere in frame
+3 - (reserved)
+4 - (reserved)
+
+0 - return to PCAP filter menu"
+
+	echo ""
+	echo -n "Enter selection: "
+	read pcapsearchselection
+	echo ""
+	case $pcapsearchselection in
+		1 ) clear; echo -n "Enter server string (partial OK): "; read $serverstring; tshark -n -r $pcappath -Y 'http.server' -T fields -e http.server | sort | uniq -c | sort -nr; press_enter;;
+		2 ) clear;;
+		3 ) clear;;
+		0 ) return;;
+		* ) echo "Please enter a number"; press enter
+	esac	
 }
 
 pcap_filter()
@@ -138,7 +185,6 @@ Choose a filter:
 		0) return;;
 		*) echo "Please enter a number"; press_enter
 	esac
-	done
 
         clear
         echo "
@@ -155,12 +201,12 @@ PCAP FILTER MENU
 
 pcap_split()
 {
-
+	clear
 }
 
 pcap_merge()
 {
-
+	clear
 }
 
 pcapmenu()
